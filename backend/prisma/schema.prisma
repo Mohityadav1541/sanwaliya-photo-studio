@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model MediaItem {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String?
+  category     String?
+  type         String   @default("IMAGE") // IMAGE, VIDEO
+  fileUrl      String?
+  externalUrl  String?
+  thumbnailUrl String?
+  eventDate    DateTime?
+  location     String?
+  isFeatured   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model ContactRequest {
+  id            Int      @id @default(autoincrement())
+  name          String
+  phone         String?
+  email         String
+  eventType     String?
+  eventDate     DateTime?
+  eventLocation String?
+  message       String
+  status        String   @default("NEW") // NEW, SEEN, ARCHIVED
+  createdAt     DateTime @default(now())
+}

@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Romantic Wedding Color Palette */
+    --background: 40 33% 98%;
+    --foreground: 25 30% 15%;
+
+    --card: 40 30% 97%;
+    --card-foreground: 25 30% 15%;
+
+    --popover: 40 33% 98%;
+    --popover-foreground: 25 30% 15%;
+
+    /* Champagne Gold */
+    --primary: 38 50% 55%;
+    --primary-foreground: 40 33% 98%;
+
+    /* Soft Blush */
+    --secondary: 15 45% 93%;
+    --secondary-foreground: 25 30% 25%;
+
+    /* Muted Cream */
+    --muted: 35 25% 92%;
+    --muted-foreground: 25 15% 45%;
+
+    /* Rose Gold Accent */
+    --accent: 15 55% 75%;
+    --accent-foreground: 25 30% 15%;
+
+    /* Deep Burgundy */
+    --destructive: 350 60% 35%;
+    --destructive-foreground: 40 33% 98%;
+
+    --border: 35 20% 88%;
+    --input: 35 20% 88%;
+    --ring: 38 50% 55%;
+
+    --radius: 0.5rem;
+
+    /* Custom Wedding Tokens */
+    --gold: 38 50% 55%;
+    --gold-light: 40 45% 75%;
+    --champagne: 40 35% 90%;
+    --ivory: 40 33% 98%;
+    --blush: 15 45% 93%;
+    --rose: 15 55% 75%;
+    --burgundy: 350 45% 30%;
+    --espresso: 25 30% 18%;
+
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(38 50% 55%), hsl(40 45% 65%));
+    --gradient-romantic: linear-gradient(180deg, hsl(40 33% 98%) 0%, hsl(15 45% 96%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsla(25 30% 15% / 0.4) 0%, hsla(25 30% 15% / 0.7) 100%);
+    --gradient-overlay: linear-gradient(to top, hsla(25 30% 15% / 0.8) 0%, transparent 60%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsla(25 30% 15% / 0.08);
+    --shadow-elegant: 0 10px 40px -10px hsla(38 50% 55% / 0.2);
+    --shadow-card: 0 2px 16px -2px hsla(25 30% 15% / 0.06);
+
+    /* Animations */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 25 25% 8%;
+    --foreground: 40 25% 95%;
+
+    --card: 25 20% 12%;
+    --card-foreground: 40 25% 95%;
+
+    --popover: 25 20% 12%;
+    --popover-foreground: 40 25% 95%;
+
+    --primary: 38 50% 55%;
+    --primary-foreground: 25 25% 8%;
+
+    --secondary: 25 20% 18%;
+    --secondary-foreground: 40 25% 90%;
+
+    --muted: 25 15% 20%;
+    --muted-foreground: 35 15% 60%;
+
+    --accent: 15 45% 45%;
+    --accent-foreground: 40 25% 95%;
+
+    --destructive: 350 55% 45%;
+    --destructive-foreground: 40 25% 95%;
+
+    --border: 25 15% 20%;
+    --input: 25 15% 20%;
+    --ring: 38 50% 55%;
+
+    --gold: 38 50% 55%;
+    --gold-light: 40 40% 45%;
+    --champagne: 40 25% 25%;
+    --ivory: 40 20% 15%;
+    --blush: 15 30% 20%;
+    --rose: 15 40% 40%;
+    --burgundy: 350 40% 35%;
+    --espresso: 25 20% 90%;
+
+    --gradient-gold: linear-gradient(135deg, hsl(38 50% 55%), hsl(40 40% 45%));
+    --gradient-romantic: linear-gradient(180deg, hsl(25 25% 8%) 0%, hsl(25 20% 12%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsla(25 25% 8% / 0.5) 0%, hsla(25 25% 8% / 0.8) 100%);
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+    @apply font-medium tracking-wide;
+  }
+}
+
+@layer components {
+  .font-serif {
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .font-sans {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold-light)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-romantic {
+    background: var(--gradient-romantic);
+  }
+
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+
+  .transition-slow {
+    transition: var(--transition-slow);
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+  }
+
+  .delay-100 { animation-delay: 0.1s; }
+  .delay-200 { animation-delay: 0.2s; }
+  .delay-300 { animation-delay: 0.3s; }
+  .delay-400 { animation-delay: 0.4s; }
+  .delay-500 { animation-delay: 0.5s; }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
