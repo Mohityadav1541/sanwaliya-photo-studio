@@ -1,10 +1,10 @@
-﻿generator client {
+generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mongodb"
-  url      = "mongodb+srv://mrmohit1540_db_user:rbScMScQWDY2oLQc@cluster0.ezh4zrn.mongodb.net/myProjectDB?appName=Cluster0"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
