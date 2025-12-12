@@ -7,55 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  CUSTOMER
+model AdminUser {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String?
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
 }
 
-model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  legacyId  Int?     @unique
-  email     String   @unique
-  password  String
-  name      String
-  phone     String?
-  role      Role     @default(CUSTOMER)
-  createdAt DateTime @default(now())
-  orders    Order[]
+model MediaItem {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  title        String
+  description  String?
+  category     String?
+  type         String    @default("IMAGE") // IMAGE, VIDEO
+  fileUrl      String?
+  externalUrl  String?
+  thumbnailUrl String?
+  eventDate    DateTime?
+  location     String?
+  isFeatured   Boolean   @default(false)
+  createdAt    DateTime  @default(now())
 }
 
-model Category {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  legacyId Int?   @unique
-  name     String
-  items    Item[]
-}
-
-model Item {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  legacyId   Int?        @unique
-  name       String
-  price      Float
-  categoryId String      @db.ObjectId
-  category   Category    @relation(fields: [categoryId], references: [id])
-  orderItems OrderItem[]
-}
-
-model Order {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  legacyId  Int?        @unique
-  userId    String      @db.ObjectId
-  user      User        @relation(fields: [userId], references: [id])
-  status    String      @default("pending")
-  createdAt DateTime    @default(now())
-  items     OrderItem[]
-}
-
-model OrderItem {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  legacyId Int?
-  orderId  String @db.ObjectId
-  order    Order  @relation(fields: [orderId], references: [id])
-  itemId   String @db.ObjectId
-  item     Item   @relation(fields: [itemId], references: [id])
+model ContactRequest {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  phone         String?
+  email         String
+  eventType     String?
+  eventDate     DateTime?
+  eventLocation String?
+  message       String
+  status        String    @default("NEW") // NEW, SEEN, ARCHIVED
+  createdAt     DateTime  @default(now())
 }
