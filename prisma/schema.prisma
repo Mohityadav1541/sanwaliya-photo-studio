@@ -1,13 +1,10 @@
-// Updated Prisma Schema with Authentication
-// This replaces your existing schema.prisma
-
-generator client {
+﻿generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = "mongodb+srv://mrmohit1540_db_user:rbScMScQWDY2oLQc@cluster0.ezh4zrn.mongodb.net/myProjectDB?appName=Cluster0"
 }
 
 enum Role {
@@ -19,7 +16,7 @@ model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   legacyId  Int?     @unique
   email     String   @unique
-  password  String   // Hashed with bcrypt
+  password  String
   name      String
   phone     String?
   role      Role     @default(CUSTOMER)
