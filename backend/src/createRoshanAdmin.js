@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const createRoshanAdmin = async () => {
     try {
         const email = 'roshanlalyadav30408@gmail.com';
-        const password = 'Roshan@123';
+        const password = '07_08_1978';
         const name = 'Roshan Lal Yadav';
 
         const existingAdmin = await prisma.adminUser.findUnique({
