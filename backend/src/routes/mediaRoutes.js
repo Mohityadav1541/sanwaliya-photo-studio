@@ -87,7 +87,7 @@ router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const media = await prisma.mediaItem.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: id },
         });
 
         if (!media) {
@@ -164,7 +164,7 @@ router.put('/admin/:id', auth, upload.single('file'), async (req, res) => {
         } = req.body;
 
         const existingMedia = await prisma.mediaItem.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: id },
         });
 
         if (!existingMedia) {
@@ -184,7 +184,7 @@ router.put('/admin/:id', auth, upload.single('file'), async (req, res) => {
         }
 
         const updatedMedia = await prisma.mediaItem.update({
-            where: { id: parseInt(id) },
+            where: { id: id },
             data: {
                 title,
                 description,
@@ -211,7 +211,7 @@ router.delete('/admin/:id', auth, async (req, res) => {
         const { id } = req.params;
 
         const media = await prisma.mediaItem.findUnique({
-            where: { id: parseInt(id) },
+            where: { id: id },
         });
 
         if (!media) {
@@ -225,7 +225,7 @@ router.delete('/admin/:id', auth, async (req, res) => {
 
         // Delete db record
         await prisma.mediaItem.delete({
-            where: { id: parseInt(id) },
+            where: { id: id },
         });
 
         res.json({ message: 'Media deleted successfully' });

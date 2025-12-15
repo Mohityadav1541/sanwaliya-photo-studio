@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "@/services/api";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -41,25 +42,31 @@ const Contact = () => {
 
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+        await api.post('/contact', formData);
+        toast({
+            title: "Inquiry Sent!",
+            description: "Thank you for reaching out. We will contact you within 24 hours.",
+        });
 
-    toast({
-      title: "Inquiry Sent!",
-      description:
-        "Thank you for reaching out. We will contact you within 24 hours.",
-    });
-
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      eventType: "",
-      eventDate: "",
-      eventLocation: "",
-      message: "",
-    });
-    setIsSubmitting(false);
+        setFormData({
+            name: "",
+            phone: "",
+            email: "",
+            eventType: "",
+            eventDate: "",
+            eventLocation: "",
+            message: "",
+        });
+    } catch (error) {
+        toast({
+            title: "Error",
+            description: "Failed to send inquiry. Please try again.",
+            variant: "destructive",
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
   };
 
   return (

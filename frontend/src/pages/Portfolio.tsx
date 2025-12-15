@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import api from "@/services/api";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/utils";
@@ -41,182 +42,36 @@ const categories = [
   "Albums",
 ];
 
-const portfolioItems = [
-  // Weddings
-  {
-    id: 1,
-    image: portfolioWedding,
-    title: "Priya & Arjun's Sacred Ceremony",
-    category: "Weddings",
-    location: "Jaipur",
-    date: "December 2024",
-    type: "photo",
-  },
-  {
-    id: 2,
-    image: wedding1,
-    title: "Neha & Rahul's Traditional Vows",
-    category: "Weddings",
-    location: "Udaipur",
-    date: "November 2024",
-    type: "photo",
-  },
-  {
-    id: 3,
-    image: wedding2,
-    title: "Haldi Ceremony Celebrations",
-    category: "Weddings",
-    location: "Delhi",
-    date: "October 2024",
-    type: "photo",
-  },
-  {
-    id: 4,
-    image: wedding3,
-    title: "Bridal Mehndi Elegance",
-    category: "Weddings",
-    location: "Mumbai",
-    date: "September 2024",
-    type: "photo",
-  },
-  // Pre-Wedding
-  {
-    id: 5,
-    image: portfolioPrewedding,
-    title: "Palace Garden Romance",
-    category: "Pre-Wedding",
-    location: "Udaipur",
-    date: "November 2024",
-    type: "photo",
-  },
-  {
-    id: 6,
-    image: prewedding1,
-    title: "Royal Heritage Shoot",
-    category: "Pre-Wedding",
-    location: "Jaipur",
-    date: "October 2024",
-    type: "photo",
-  },
-  {
-    id: 7,
-    image: prewedding2,
-    title: "Garden Dance of Love",
-    category: "Pre-Wedding",
-    location: "Bangalore",
-    date: "September 2024",
-    type: "photo",
-  },
-  {
-    id: 8,
-    image: prewedding3,
-    title: "Sunset Beach Romance",
-    category: "Pre-Wedding",
-    location: "Goa",
-    date: "August 2024",
-    type: "photo",
-  },
-  // Candid
-  {
-    id: 9,
-    image: portfolioCandid,
-    title: "Joyful Bridal Moments",
-    category: "Candid",
-    location: "Delhi",
-    date: "October 2024",
-    type: "photo",
-  },
-  {
-    id: 10,
-    image: candid1,
-    title: "Bridesmaids Fun",
-    category: "Candid",
-    location: "Mumbai",
-    date: "September 2024",
-    type: "photo",
-  },
-  {
-    id: 11,
-    image: candid2,
-    title: "Emotional First Look",
-    category: "Candid",
-    location: "Chennai",
-    date: "August 2024",
-    type: "photo",
-  },
-  {
-    id: 12,
-    image: candid3,
-    title: "Sangeet Night Energy",
-    category: "Candid",
-    location: "Kolkata",
-    date: "July 2024",
-    type: "photo",
-  },
-  // Albums
-  {
-    id: 13,
-    image: portfolioAlbum,
-    title: "Premium Wedding Album",
-    category: "Albums",
-    location: "Mumbai",
-    date: "September 2024",
-    type: "photo",
-  },
-  {
-    id: 14,
-    image: album1,
-    title: "Luxury Leather Album",
-    category: "Albums",
-    location: "Delhi",
-    date: "August 2024",
-    type: "photo",
-  },
-  {
-    id: 15,
-    image: album2,
-    title: "Designer Photo Book",
-    category: "Albums",
-    location: "Jaipur",
-    date: "July 2024",
-    type: "photo",
-  },
-  // Cinematic Videos
-  {
-    id: 16,
-    image: videoThumb1,
-    title: "Romantic Wedding Film",
-    category: "Cinematic Videos",
-    location: "Udaipur",
-    date: "December 2024",
-    type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  },
-  {
-    id: 17,
-    image: videoThumb2,
-    title: "Grand Baraat Procession",
-    category: "Cinematic Videos",
-    location: "Jaipur",
-    date: "November 2024",
-    type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  },
-  {
-    id: 18,
-    image: videoThumb3,
-    title: "Ceremony Highlights",
-    category: "Cinematic Videos",
-    location: "Delhi",
-    date: "October 2024",
-    type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  },
-];
-
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedItem, setSelectedItem] = useState<typeof portfolioItems[0] | null>(null);
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+  const [portfolioItems, setPortfolioItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPortfolio = async () => {
+      try {
+        const res = await api.get('/media?limit=100');
+        const mappedItems = res.data.items.map((item: any) => ({
+          id: item.id,
+          image: item.fileUrl ? (item.fileUrl.startsWith('http') ? item.fileUrl : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${item.fileUrl}`) : '',
+          title: item.title,
+          category: item.category,
+          location: item.location || 'Jaipur', // Default if missing
+          date: item.eventDate ? new Date(item.eventDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '2024',
+          type: item.type === 'VIDEO' ? 'video' : 'photo',
+          videoUrl: item.externalUrl,
+        }));
+        setPortfolioItems(mappedItems);
+      } catch (error) {
+        console.error("Failed to fetch portfolio:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchPortfolio();
+  }, []);
 
   const filteredItems =
     activeCategory === "All"

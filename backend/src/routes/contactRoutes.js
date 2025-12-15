@@ -95,7 +95,7 @@ router.patch('/admin/:id', auth, async (req, res) => {
         }
 
         const contact = await prisma.contactRequest.update({
-            where: { id: parseInt(id) },
+            where: { id: id },
             data: { status },
         });
         res.json(contact);

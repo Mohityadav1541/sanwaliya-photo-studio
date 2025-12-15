@@ -30,6 +30,7 @@ const seedAdmin = async () => {
         console.log('Email:', email);
         console.log('Password:', password);
     } catch (error) {
+        // No change needed for seed, verify logic only.
         console.error('Error seeding admin:', error);
     } finally {
         await prisma.$disconnect();
@@ -37,3 +38,4 @@ const seedAdmin = async () => {
 };
 
 seedAdmin();
+
