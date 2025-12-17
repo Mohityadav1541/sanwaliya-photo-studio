@@ -15,12 +15,12 @@ const MediaManager = () => {
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
     const { toast } = useToast();
-    
+
     // Form State
     const [title, setTitle] = useState('');
     const [category, setCategory] = useState('Weddings');
     const [description, setDescription] = useState('');
-    const [file, setFile] = useState<File | null>(null);
+    const [files, setFiles] = useState<FileList | null>(null);
     const [uploading, setUploading] = useState(false);
     const [type, setType] = useState('IMAGE'); // IMAGE or VIDEO
     const [videoUrl, setVideoUrl] = useState('');
@@ -44,34 +44,52 @@ const MediaManager = () => {
         e.preventDefault();
         setUploading(true);
 
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('category', category);
-        formData.append('description', description);
-        formData.append('type', type);
-        
-        if (file) {
-            formData.append('file', file);
-        }
-        if (type === 'VIDEO' && videoUrl) {
-            formData.append('externalUrl', videoUrl);
-        }
-
         try {
-            await api.post('/media/admin', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            // Handle Video URL case (no file)
+            if (type === 'VIDEO' && videoUrl && (!files || files.length === 0)) {
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('category', category);
+                formData.append('description', description);
+                formData.append('type', type);
+                formData.append('externalUrl', videoUrl);
+
+                await api.post('/media/admin', formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                });
+            }
+            // Handle File uploads (Multiple)
+            else if (files && files.length > 0) {
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const formData = new FormData();
+                    formData.append('title', files.length > 1 ? `${title} (${i + 1})` : title);
+                    formData.append('category', category);
+                    formData.append('description', description);
+                    formData.append('type', type);
+                    formData.append('file', file);
+
+                    if (type === 'VIDEO' && videoUrl) {
+                        formData.append('externalUrl', videoUrl);
+                    }
+
+                    await api.post('/media/admin', formData, {
+                        headers: { 'Content-Type': 'multipart/form-data' },
+                    });
+                }
+            }
+
             toast({ title: 'Success', description: 'Media uploaded successfully' });
             setOpen(false);
             fetchMedia();
             // Reset form
             setTitle('');
             setDescription('');
-            setFile(null);
+            setFiles(null);
             setVideoUrl('');
         } catch (error: any) {
-            toast({ 
-                title: 'Error', 
+            toast({
+                title: 'Error',
                 description: error.response?.data?.error || 'Upload failed',
                 variant: 'destructive'
             });
@@ -135,32 +153,33 @@ const MediaManager = () => {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            
+
                             {type === 'IMAGE' ? (
                                 <div className="space-y-2">
-                                    <Label>Image File</Label>
-                                    <Input 
-                                        type="file" 
+                                    <Label>Image Files (Select Multiple)</Label>
+                                    <Input
+                                        type="file"
                                         accept="image/*"
-                                        onChange={e => setFile(e.target.files ? e.target.files[0] : null)}
+                                        multiple
+                                        onChange={e => setFiles(e.target.files)}
                                         required
                                     />
                                 </div>
                             ) : (
                                 <div className="space-y-2">
                                     <Label>Video URL (YouTube/External)</Label>
-                                    <Input 
-                                        placeholder="https://youtube.com/..." 
+                                    <Input
+                                        placeholder="https://youtube.com/..."
                                         value={videoUrl}
                                         onChange={e => setVideoUrl(e.target.value)}
-                                        required
                                     />
                                     {/* Optional thumbnail upload for video */}
                                     <Label>Thumbnail (Optional)</Label>
-                                    <Input 
-                                        type="file" 
+                                    <Input
+                                        type="file"
                                         accept="image/*"
-                                        onChange={e => setFile(e.target.files ? e.target.files[0] : null)}
+                                        multiple
+                                        onChange={e => setFiles(e.target.files)}
                                     />
                                 </div>
                             )}
@@ -204,11 +223,11 @@ const MediaManager = () => {
                                 <TableRow key={item.id}>
                                     <TableCell>
                                         {item.type === 'IMAGE' || (item.type === 'VIDEO' && item.fileUrl) ? (
-                                             <img 
-                                                src={item.fileUrl ? (item.fileUrl.startsWith('http') ? item.fileUrl : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${item.fileUrl}`) : ''} 
-                                                alt={item.title} 
+                                            <img
+                                                src={item.fileUrl ? (item.fileUrl.startsWith('http') ? item.fileUrl : `${import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000'}${item.fileUrl}`) : ''}
+                                                alt={item.title}
                                                 className="w-16 h-16 object-cover rounded"
-                                             />
+                                            />
                                         ) : (
                                             <div className="w-16 h-16 bg-gray-100 flex items-center justify-center rounded">Video</div>
                                         )}
