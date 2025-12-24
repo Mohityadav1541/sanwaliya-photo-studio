@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Navigate } from 'react-router-dom';
 
 interface ProtectedRouteProps {
@@ -26,6 +27,17 @@ const ProtectedRoute = ({ children, adminOnly = false }: ProtectedRouteProps) =>
     }
 
     return <>{children}</>;
+=======
+import { Navigate, Outlet } from 'react-router-dom';
+import { isAuthenticated } from '@/services/auth';
+
+const ProtectedRoute = () => {
+    if (!isAuthenticated()) {
+        return <Navigate to="/admin/login" replace />;
+    }
+
+    return <Outlet />;
+>>>>>>> 72cceddb95ed801190bc58263c1cf06ccdd7da3e
 };
 
 export default ProtectedRoute;

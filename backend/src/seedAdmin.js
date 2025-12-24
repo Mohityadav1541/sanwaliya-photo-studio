@@ -3,8 +3,8 @@ const bcrypt = require('bcryptjs');
 
 const seedAdmin = async () => {
     try {
-        const email = 'admin@sanwaliyaphotostudio.com';
-        const password = 'Admin@123';
+        const email = 'roshanlalyadav30408@gmail.com';
+        const password = 'rambhajan1540';
 
         // Check if admin already exists
         const existingAdmin = await prisma.adminUser.findUnique({
@@ -30,6 +30,7 @@ const seedAdmin = async () => {
         console.log('Email:', email);
         console.log('Password:', password);
     } catch (error) {
+        // No change needed for seed, verify logic only.
         console.error('Error seeding admin:', error);
     } finally {
         await prisma.$disconnect();
@@ -37,3 +38,4 @@ const seedAdmin = async () => {
 };
 
 seedAdmin();
+
