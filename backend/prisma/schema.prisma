@@ -16,11 +16,7 @@ model AdminUser {
 }
 
 model MediaItem {
-<<<<<<< HEAD
-  id           String    @id @default(auto()) @map("_id") @db.ObjectId
-=======
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
->>>>>>> 72cceddb95ed801190bc58263c1cf06ccdd7da3e
   title        String
   description  String?
   category     String?
@@ -35,11 +31,7 @@ model MediaItem {
 }
 
 model ContactRequest {
-<<<<<<< HEAD
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-=======
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
->>>>>>> 72cceddb95ed801190bc58263c1cf06ccdd7da3e
   name          String
   phone         String?
   email         String
