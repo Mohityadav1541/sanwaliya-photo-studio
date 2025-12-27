@@ -16,12 +16,14 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Admin Pages
+
+// Admin Pages
 import Login from "./pages/admin/Login";
 import AdminLayout from "./pages/admin/Layout";
 import Dashboard from "./pages/admin/Dashboard";
 import MediaManager from "./pages/admin/MediaManager";
 import Inquiries from "./pages/admin/Inquiries";
-import ProtectedRoute from "./components/ProtectedRoute";
+
 
 const queryClient = new QueryClient();
 
@@ -38,32 +40,18 @@ const App = () => (
           <Route path="/services" element={<Services />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-<<<<<<< HEAD
-          {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute adminOnly>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-=======
 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
-          
-          <Route element={<ProtectedRoute />}>
-             <Route path="/admin" element={<AdminLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="media" element={<MediaManager />} />
-                <Route path="inquiries" element={<Inquiries />} />
-             </Route>
-          </Route>
 
->>>>>>> 72cceddb95ed801190bc58263c1cf06ccdd7da3e
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="media" element={<MediaManager />} />
+              <Route path="inquiries" element={<Inquiries />} />
+            </Route>
+          </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

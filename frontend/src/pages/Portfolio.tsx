@@ -1,37 +1,10 @@
 // Force update - triggering deployment for image fix
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/utils";
-import { Play } from "lucide-react";
-
-// Wedding images
-import portfolioWedding from "@/assets/portfolio-wedding.jpg";
-import wedding1 from "@/assets/wedding-1.jpg";
-import wedding2 from "@/assets/wedding-2.jpg";
-import wedding3 from "@/assets/wedding-3.jpg";
-
-// Pre-wedding images
-import portfolioPrewedding from "@/assets/portfolio-prewedding.jpg";
-import prewedding1 from "@/assets/prewedding-1.jpg";
-import prewedding2 from "@/assets/prewedding-2.jpg";
-import prewedding3 from "@/assets/prewedding-3.jpg";
-
-// Candid images
-import portfolioCandid from "@/assets/portfolio-candid.jpg";
-import candid1 from "@/assets/candid-1.jpg";
-import candid2 from "@/assets/candid-2.jpg";
-import candid3 from "@/assets/candid-3.jpg";
-
-// Album images
-import portfolioAlbum from "@/assets/portfolio-album.jpg";
-import album1 from "@/assets/album-1.jpg";
-import album2 from "@/assets/album-2.jpg";
-
-// Video thumbnails
-import videoThumb1 from "@/assets/video-thumb-1.jpg";
-import videoThumb2 from "@/assets/video-thumb-2.jpg";
-import videoThumb3 from "@/assets/video-thumb-3.jpg";
+import { Play, Loader2 } from "lucide-react";
+import api from "@/services/api";
 
 const categories = [
   "All",
@@ -42,187 +15,73 @@ const categories = [
   "Albums",
 ];
 
-const portfolioItems = [
-  // Weddings
-  {
-    id: 1,
-    image: portfolioWedding,
-    title: "Priya & Arjun's Sacred Ceremony",
-    category: "Weddings",
-    location: "Jaipur",
-    date: "December 2024",
-    type: "photo",
-  },
-  {
-    id: 2,
-    image: wedding1,
-    title: "Neha & Rahul's Traditional Vows",
-    category: "Weddings",
-    location: "Udaipur",
-    date: "November 2024",
-    type: "photo",
-  },
-  {
-    id: 3,
-    image: wedding2,
-    title: "Haldi Ceremony Celebrations",
-    category: "Weddings",
-    location: "Delhi",
-    date: "October 2024",
-    type: "photo",
-  },
-  {
-    id: 4,
-    image: wedding3,
-    title: "Bridal Mehndi Elegance",
-    category: "Weddings",
-    location: "Mumbai",
-    date: "September 2024",
-    type: "photo",
-  },
-  // Pre-Wedding
-  {
-    id: 5,
-    image: portfolioPrewedding,
-    title: "Palace Garden Romance",
-    category: "Pre-Wedding",
-    location: "Udaipur",
-    date: "November 2024",
-    type: "photo",
-  },
-  {
-    id: 6,
-    image: prewedding1,
-    title: "Royal Heritage Shoot",
-    category: "Pre-Wedding",
-    location: "Jaipur",
-    date: "October 2024",
-    type: "photo",
-  },
-  {
-    id: 7,
-    image: prewedding2,
-    title: "Garden Dance of Love",
-    category: "Pre-Wedding",
-    location: "Bangalore",
-    date: "September 2024",
-    type: "photo",
-  },
-  {
-    id: 8,
-    image: prewedding3,
-    title: "Sunset Beach Romance",
-    category: "Pre-Wedding",
-    location: "Goa",
-    date: "August 2024",
-    type: "photo",
-  },
-  // Candid
-  {
-    id: 9,
-    image: portfolioCandid,
-    title: "Joyful Bridal Moments",
-    category: "Candid",
-    location: "Delhi",
-    date: "October 2024",
-    type: "photo",
-  },
-  {
-    id: 10,
-    image: candid1,
-    title: "Bridesmaids Fun",
-    category: "Candid",
-    location: "Mumbai",
-    date: "September 2024",
-    type: "photo",
-  },
-  {
-    id: 11,
-    image: candid2,
-    title: "Emotional First Look",
-    category: "Candid",
-    location: "Chennai",
-    date: "August 2024",
-    type: "photo",
-  },
-  {
-    id: 12,
-    image: candid3,
-    title: "Sangeet Night Energy",
-    category: "Candid",
-    location: "Kolkata",
-    date: "July 2024",
-    type: "photo",
-  },
-  // Albums
-  {
-    id: 13,
-    image: portfolioAlbum,
-    title: "Premium Wedding Album",
-    category: "Albums",
-    location: "Mumbai",
-    date: "September 2024",
-    type: "photo",
-  },
-  {
-    id: 14,
-    image: album1,
-    title: "Luxury Leather Album",
-    category: "Albums",
-    location: "Delhi",
-    date: "August 2024",
-    type: "photo",
-  },
-  {
-    id: 15,
-    image: album2,
-    title: "Designer Photo Book",
-    category: "Albums",
-    location: "Jaipur",
-    date: "July 2024",
-    type: "photo",
-  },
-  // Cinematic Videos
-  {
-    id: 16,
-    image: videoThumb1,
-    title: "Romantic Wedding Film",
-    category: "Cinematic Videos",
-    location: "Udaipur",
-    date: "December 2024",
-    type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  },
-  {
-    id: 17,
-    image: videoThumb2,
-    title: "Grand Baraat Procession",
-    category: "Cinematic Videos",
-    location: "Jaipur",
-    date: "November 2024",
-    type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  },
-  {
-    id: 18,
-    image: videoThumb3,
-    title: "Ceremony Highlights",
-    category: "Cinematic Videos",
-    location: "Delhi",
-    date: "October 2024",
-    type: "video",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-  },
-];
+interface MediaItem {
+  id: string;
+  title: string;
+  category: string;
+  type: string;
+  fileUrl?: string; // For images/videos hosted on our server
+  externalUrl?: string; // For YouTube, etc.
+  thumbnailUrl?: string;
+  location?: string;
+  eventDate?: string;
+  isFeatured?: boolean;
+}
 
 const Portfolio = () => {
   const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedItem, setSelectedItem] = useState<typeof portfolioItems[0] | null>(null);
+  const [items, setItems] = useState<MediaItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedItem, setSelectedItem] = useState<MediaItem | null>(null);
+
+  // Helper to construct full URL for local images
+  const getImageUrl = (item: MediaItem) => {
+    if (item.type === 'VIDEO' && item.thumbnailUrl) {
+      if (item.thumbnailUrl.startsWith('http')) return item.thumbnailUrl;
+      const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+      return `${baseUrl}${item.thumbnailUrl}`;
+    }
+
+    if (item.fileUrl) {
+      if (item.fileUrl.startsWith('http')) return item.fileUrl;
+      // Assuming VITE_API_URL is something like http://localhost:5000/api
+      // We need just the origin + fileUrl (which starts with /uploads)
+      const baseUrl = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+      return `${baseUrl}${item.fileUrl}`;
+    }
+
+    // Fallback or placeholder could go here
+    return '';
+  };
+
+  // Format date helper
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
+  useEffect(() => {
+    const fetchPortfolio = async () => {
+      try {
+        setLoading(true);
+        // Fetch all media items
+        const response = await api.get('/media?limit=100');
+        setItems(response.data.items);
+      } catch (error) {
+        console.error("Failed to fetch portfolio items", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPortfolio();
+  }, []);
 
   const filteredItems =
     activeCategory === "All"
-      ? portfolioItems
-      : portfolioItems.filter((item) => item.category === activeCategory);
+      ? items
+      : items.filter((item) => item.category === activeCategory);
 
   return (
     <div className="min-h-screen">
@@ -269,38 +128,53 @@ const Portfolio = () => {
         {/* Gallery Grid */}
         <section className="py-16 bg-background">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => setSelectedItem(item)}
-                  className="group cursor-pointer relative aspect-[4/5] rounded-xl overflow-hidden"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  {item.type === "video" && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-elegant group-hover:scale-110 transition-transform duration-300">
-                        <Play className="w-6 h-6 text-primary-foreground ml-1" />
+            {loading ? (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+              </div>
+            ) : filteredItems.length === 0 ? (
+              <div className="text-center py-20 text-muted-foreground">
+                <p>No items found in this category.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredItems.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => setSelectedItem(item)}
+                    className="group cursor-pointer relative aspect-[4/5] rounded-xl overflow-hidden bg-gray-100"
+                  >
+                    {(item.fileUrl || item.thumbnailUrl) && (
+                      <img
+                        src={getImageUrl(item)}
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
+                    )}
+
+                    {item.type === "VIDEO" && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-elegant group-hover:scale-110 transition-transform duration-300">
+                          <Play className="w-6 h-6 text-primary-foreground ml-1" />
+                        </div>
                       </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                      <p className="text-sm text-primary mb-1">{item.category}</p>
+                      <h3 className="font-serif text-xl text-primary-foreground font-medium mb-2">
+                        {item.title}
+                      </h3>
+                      {item.location && (
+                        <p className="text-sm text-primary-foreground/70">
+                          {item.location} {item.eventDate && `• ${formatDate(item.eventDate)}`}
+                        </p>
+                      )}
                     </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                    <p className="text-sm text-primary mb-1">{item.category}</p>
-                    <h3 className="font-serif text-xl text-primary-foreground font-medium mb-2">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-primary-foreground/70">
-                      {item.location} • {item.date}
-                    </p>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -311,10 +185,10 @@ const Portfolio = () => {
             onClick={() => setSelectedItem(null)}
           >
             <div className="relative max-w-5xl max-h-[90vh] w-full" onClick={(e) => e.stopPropagation()}>
-              {selectedItem.type === "video" ? (
+              {selectedItem.type === "VIDEO" && selectedItem.externalUrl ? (
                 <div className="aspect-video w-full">
                   <iframe
-                    src={selectedItem.videoUrl}
+                    src={selectedItem.externalUrl.replace("watch?v=", "embed/")}
                     title={selectedItem.title}
                     className="w-full h-full rounded-lg"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -323,7 +197,7 @@ const Portfolio = () => {
                 </div>
               ) : (
                 <img
-                  src={selectedItem.image}
+                  src={getImageUrl(selectedItem)}
                   alt={selectedItem.title}
                   className="w-full h-full object-contain rounded-lg"
                 />
@@ -333,7 +207,7 @@ const Portfolio = () => {
                   {selectedItem.title}
                 </h3>
                 <p className="text-primary-foreground/70">
-                  {selectedItem.location} • {selectedItem.date}
+                  {selectedItem.location} {selectedItem.eventDate && `• ${formatDate(selectedItem.eventDate)}`}
                 </p>
               </div>
               <button
