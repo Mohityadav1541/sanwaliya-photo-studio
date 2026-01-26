@@ -1,89 +1,39 @@
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { logout, getCurrentUser } from '@/services/auth';
-import { LayoutDashboard, Image, MessageSquare, LogOut, Menu } from 'lucide-react';
-import { useState } from 'react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { cn } from '@/lib/utils';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { logout } from '@/services/auth';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const user = getCurrentUser();
-  const [open, setOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
+    navigate('/admin/login');
   };
 
-  const navItems = [
-    { href: '/admin/dashboard', label: 'Dashboard' },
-    { href: '/admin/media', label: 'Media Manager' },
-    { href: '/admin/inquiries', label: 'Inquiries' },
-  ];
-
-  const SidebarContent = () => (
-    <div className="flex flex-col h-full">
-      <div className="p-6 border-b">
-        <div className="flex items-center gap-3 mb-2">
-          <img src="/logo.png" alt="Sanwaliya Logo" className="h-8 w-auto object-contain" />
-          <h1 className="text-xl font-bold font-serif">Sanwaliya Admin</h1>
-        </div>
-        <p className="text-sm text-muted-foreground">Welcome, {user?.name || 'Admin'}</p>
-      </div>
-      <nav className="flex-1 p-4 space-y-2">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            to={item.href}
-            onClick={() => setOpen(false)}
-            className={cn(
-              "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors",
-              location.pathname === item.href
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-secondary"
-            )}
-          >
-            {/* <item.icon className="w-5 h-5" /> */}
-            {item.label}
-          </Link>
-        ))}
-      </nav>
-      <div className="p-4 border-t">
-        <Button variant="ghost" className="w-full justify-start gap-3" onClick={handleLogout}>
-          {/* <LogOut className="w-5 h-5" /> */}
-          Logout
-        </Button>
-      </div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-background flex">
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:block w-64 border-r bg-card">
-        <SidebarContent />
-      </aside>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <header className="bg-white border-b px-6 py-4 flex justify-between items-center">
+        <div className="font-bold text-xl">Sanwaliya Admin Debug</div>
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+        >
+          Logout
+        </button>
+      </header>
 
-      {/* Mobile Sidebar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 border-b bg-card flex items-center px-4 z-50">
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <Menu className="w-6 h-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
-            <SidebarContent />
-          </SheetContent>
-        </Sheet>
-        <h1 className="ml-4 font-bold">Admin Panel</h1>
+      <div className="flex flex-1">
+        <aside className="w-64 bg-white border-r p-4 hidden md:block">
+          <nav className="space-y-2">
+            <Link to="/admin/dashboard" className="block p-2 hover:bg-gray-100 rounded">Dashboard</Link>
+            <Link to="/admin/media" className="block p-2 hover:bg-gray-100 rounded">Media Manager</Link>
+            <Link to="/admin/inquiries" className="block p-2 hover:bg-gray-100 rounded">Inquiries</Link>
+          </nav>
+        </aside>
+
+        <main className="flex-1 p-8">
+          <Outlet />
+        </main>
       </div>
-
-      {/* Main Content */}
-      <main className="flex-1 md:p-8 p-4 pt-20 md:pt-8 bg-gray-50/50 overflow-y-auto h-screen">
-        <Outlet />
-      </main>
     </div>
   );
 };
