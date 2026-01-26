@@ -29,14 +29,14 @@ export function Footer() {
                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary transition-colors duration-300"
                 aria-label="Instagram"
               >
-                <Instagram className="w-5 h-5" />
+                <span>IG</span>
               </a>
               <a
                 href="#"
                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary transition-colors duration-300"
                 aria-label="Facebook"
               >
-                <Facebook className="w-5 h-5" />
+                <span>FB</span>
               </a>
               <a
                 href="https://www.youtube.com/@sanwaliya-photo-studio"
@@ -45,7 +45,7 @@ export function Footer() {
                 className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary transition-colors duration-300"
                 aria-label="YouTube"
               >
-                <Youtube className="w-5 h-5" />
+                <span>YT</span>
               </a>
             </div>
           </div>
@@ -98,7 +98,7 @@ export function Footer() {
             <h4 className="font-serif text-xl font-medium mb-6">Contact Us</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-primary mt-0.5" />
+                <span className="text-primary mt-0.5">📞</span>
                 <div className="flex flex-col">
                   <p className="text-sm text-primary-foreground/70">Call us</p>
                   <a
@@ -116,7 +116,7 @@ export function Footer() {
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <Mail className="w-5 h-5 text-primary mt-0.5" />
+                <span className="text-primary mt-0.5">✉️</span>
                 <div>
                   <p className="text-sm text-primary-foreground/70">Email us</p>
                   <a
@@ -128,7 +128,7 @@ export function Footer() {
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary mt-0.5" />
+                <span className="text-primary mt-0.5">📍</span>
                 <div>
                   <p className="text-sm text-primary-foreground/70">Visit us</p>
                   <p className="text-sm font-medium">

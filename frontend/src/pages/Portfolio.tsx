@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/utils";
-import { Play, Loader2 } from "lucide-react";
+// import { Play, Loader2 } from "lucide-react";
 import api from "@/services/api";
 
 const categories = [
@@ -130,7 +130,8 @@ const Portfolio = () => {
           <div className="container mx-auto px-4 md:px-6">
             {loading ? (
               <div className="flex justify-center items-center py-20">
-                <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                {/* <Loader2 className="w-10 h-10 animate-spin text-primary" /> */}
+                <span className="text-primary font-bold">Loading...</span>
               </div>
             ) : filteredItems.length === 0 ? (
               <div className="text-center py-20 text-muted-foreground">
@@ -155,7 +156,8 @@ const Portfolio = () => {
                     {item.type === "VIDEO" && (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center shadow-elegant group-hover:scale-110 transition-transform duration-300">
-                          <Play className="w-6 h-6 text-primary-foreground ml-1" />
+                          {/* <Play className="w-6 h-6 text-primary-foreground ml-1" /> */}
+                          <span className="text-white">▶</span>
                         </div>
                       </div>
                     )}

@@ -3,7 +3,7 @@ import api from '@/services/api';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Mail, Phone, Calendar, MapPin } from 'lucide-react';
+// import { Mail, Phone, Calendar, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 
 const Inquiries = () => {
@@ -62,13 +62,13 @@ const Inquiries = () => {
                                     </TableCell>
                                     <TableCell>
                                         <div className="font-medium">{item.name}</div>
-                                        <div className="text-sm text-gray-500 flex items-center gap-1"><Mail className="w-3 h-3" /> {item.email}</div>
-                                        <div className="text-sm text-gray-500 flex items-center gap-1"><Phone className="w-3 h-3" /> {item.phone}</div>
+                                        <div className="text-sm text-gray-500 flex items-center gap-1">{/* <Mail className="w-3 h-3" /> */} {item.email}</div>
+                                        <div className="text-sm text-gray-500 flex items-center gap-1">{/* <Phone className="w-3 h-3" /> */} {item.phone}</div>
                                     </TableCell>
                                     <TableCell>
                                         <div className="font-medium">{item.eventType}</div>
-                                        {item.eventDate && <div className="text-sm text-gray-500 flex items-center gap-1"><Calendar className="w-3 h-3" /> {format(new Date(item.eventDate), 'MMM d, yyyy')}</div>}
-                                        {item.eventLocation && <div className="text-sm text-gray-500 flex items-center gap-1"><MapPin className="w-3 h-3" /> {item.eventLocation}</div>}
+                                        {item.eventDate && <div className="text-sm text-gray-500 flex items-center gap-1">{/* <Calendar className="w-3 h-3" /> */} {format(new Date(item.eventDate), 'MMM d, yyyy')}</div>}
+                                        {item.eventLocation && <div className="text-sm text-gray-500 flex items-center gap-1">{/* <MapPin className="w-3 h-3" /> */} {item.eventLocation}</div>}
                                     </TableCell>
                                     <TableCell className="max-w-xs truncate" title={item.message}>{item.message}</TableCell>
                                     <TableCell>

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Trash2, Plus, Loader2 } from 'lucide-react';
+// import { Trash2, Plus, Loader2 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 
 const MediaManager = () => {
@@ -115,7 +115,7 @@ const MediaManager = () => {
                 <h2 className="text-3xl font-bold tracking-tight">Media Manager</h2>
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                        <Button><Plus className="mr-2 h-4 w-4" /> Add Media</Button>
+                        <Button>{/* <Plus className="mr-2 h-4 w-4" /> */} Add Media</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[90vh]">
                         <DialogHeader>
@@ -190,7 +190,7 @@ const MediaManager = () => {
                             </div>
 
                             <Button type="submit" className="w-full" disabled={uploading}>
-                                {uploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                {uploading && <span>...</span>/* <Loader2 className="mr-2 h-4 w-4 animate-spin" /> */}
                                 Upload
                             </Button>
                         </form>
@@ -237,7 +237,8 @@ const MediaManager = () => {
                                     <TableCell>{item.type}</TableCell>
                                     <TableCell>
                                         <Button variant="destructive" size="sm" onClick={() => handleDelete(item.id)}>
-                                            <Trash2 className="w-4 h-4" />
+                                            Remove
+                                            {/* <Trash2 className="w-4 h-4" /> */}
                                         </Button>
                                     </TableCell>
                                 </TableRow>

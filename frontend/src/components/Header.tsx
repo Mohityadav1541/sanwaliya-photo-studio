@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Phone } from "lucide-react";
+// import { Menu, X, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -102,7 +102,7 @@ export function Header() {
                 textColor
               )}
             >
-              <Phone className="w-4 h-4" />
+              <span className="text-xl">📞</span>
               <span>+91 98291 28594</span>
             </a>
             <Link to="/contact">
@@ -118,7 +118,7 @@ export function Header() {
             className={cn("lg:hidden p-2 transition-colors duration-300", textColor)}
             aria-label="Toggle menu"
           >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isMobileMenuOpen ? <span>✕</span> : <span>☰</span>}
           </button>
         </nav>
 
