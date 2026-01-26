@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Public Pages
 import Index from "./pages/Index";
@@ -44,14 +44,20 @@ const App = () => (
           {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="media" element={<MediaManager />} />
-              <Route path="inquiries" element={<Inquiries />} />
-            </Route>
+          {/* Inline Protected Route Logic */}
+          <Route path="/admin" element={
+            localStorage.getItem('token') ? (
+              <AdminLayout />
+            ) : (
+              <Navigate to="/admin/login" replace />
+            )
+          }>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="media" element={<MediaManager />} />
+            <Route path="inquiries" element={<Inquiries />} />
           </Route>
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
