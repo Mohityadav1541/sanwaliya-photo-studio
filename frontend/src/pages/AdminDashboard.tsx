@@ -74,7 +74,10 @@ const AdminDashboard = () => {
     return (
         <div className="admin-dashboard">
             <header className="admin-header">
-                <h1>Admin Dashboard</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <img src="/logo.png" alt="Logo" style={{ height: '40px', width: 'auto' }} />
+                    <h1>Admin Dashboard</h1>
+                </div>
                 <div className="admin-user-info">
                     <span>Welcome, {user.name}</span>
                     <button onClick={handleLogout} className="logout-btn">Logout</button>

@@ -48,23 +48,26 @@ export function Header() {
       <div className="container mx-auto px-4 md:px-6">
         <nav className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex flex-col">
-            <span
-              className={cn(
-                "font-serif text-2xl md:text-3xl font-semibold tracking-wide transition-colors duration-300",
-                textColor
-              )}
-            >
-              Sanwaliya
-            </span>
-            <span
-              className={cn(
-                "text-xs tracking-[0.3em] uppercase transition-colors duration-300",
-                isScrolled || !isHomePage ? "text-muted-foreground" : "text-primary-foreground/80"
-              )}
-            >
-              Photo Studio
-            </span>
+          <Link to="/" className="flex items-center gap-3">
+            <img src="/logo.png" alt="Sanwaliya Logo" className="h-12 w-auto object-contain" />
+            <div className="flex flex-col">
+              <span
+                className={cn(
+                  "font-serif text-2xl md:text-3xl font-semibold tracking-wide transition-colors duration-300",
+                  textColor
+                )}
+              >
+                Sanwaliya
+              </span>
+              <span
+                className={cn(
+                  "text-xs tracking-[0.3em] uppercase transition-colors duration-300",
+                  isScrolled || !isHomePage ? "text-muted-foreground" : "text-primary-foreground/80"
+                )}
+              >
+                Photo Studio
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}

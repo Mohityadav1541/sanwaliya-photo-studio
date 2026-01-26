@@ -38,7 +38,8 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <Card className="w-full max-w-md">
-        <CardHeader>
+        <CardHeader className="flex flex-col items-center">
+          <img src="/logo.png" alt="Sanwaliya Logo" className="h-16 w-auto object-contain mb-4" />
           <CardTitle className="text-2xl text-center">Admin Login</CardTitle>
           <CardDescription className="text-center">
             Sign in to manage Sanwaliya Photo Studio

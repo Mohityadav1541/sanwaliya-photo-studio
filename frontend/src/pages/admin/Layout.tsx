@@ -17,15 +17,18 @@ const AdminLayout = () => {
   };
 
   const navItems = [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/media', label: 'Media Manager', icon: Image },
-    { href: '/admin/inquiries', label: 'Inquiries', icon: MessageSquare },
+    { href: '/admin/dashboard', label: 'Dashboard' },
+    { href: '/admin/media', label: 'Media Manager' },
+    { href: '/admin/inquiries', label: 'Inquiries' },
   ];
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       <div className="p-6 border-b">
-        <h1 className="text-xl font-bold font-serif">Sanwaliya Admin</h1>
+        <div className="flex items-center gap-3 mb-2">
+          <img src="/logo.png" alt="Sanwaliya Logo" className="h-8 w-auto object-contain" />
+          <h1 className="text-xl font-bold font-serif">Sanwaliya Admin</h1>
+        </div>
         <p className="text-sm text-muted-foreground">Welcome, {user?.name || 'Admin'}</p>
       </div>
       <nav className="flex-1 p-4 space-y-2">
@@ -41,14 +44,14 @@ const AdminLayout = () => {
                 : "text-muted-foreground hover:bg-secondary"
             )}
           >
-            <item.icon className="w-5 h-5" />
+            {/* <item.icon className="w-5 h-5" /> */}
             {item.label}
           </Link>
         ))}
       </nav>
       <div className="p-4 border-t">
         <Button variant="ghost" className="w-full justify-start gap-3" onClick={handleLogout}>
-          <LogOut className="w-5 h-5" />
+          {/* <LogOut className="w-5 h-5" /> */}
           Logout
         </Button>
       </div>

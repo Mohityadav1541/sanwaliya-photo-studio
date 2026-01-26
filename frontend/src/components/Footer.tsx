@@ -8,11 +8,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
           <div className="space-y-4">
-            <div>
-              <h3 className="font-serif text-3xl font-semibold">Sanwaliya</h3>
-              <p className="text-xs tracking-[0.3em] uppercase text-primary-foreground/60">
-                Photo Studio
-              </p>
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="Sanwaliya Logo" className="h-12 w-auto object-contain" />
+              <div>
+                <h3 className="font-serif text-3xl font-semibold">Sanwaliya</h3>
+                <p className="text-xs tracking-[0.3em] uppercase text-primary-foreground/60">
+                  Photo Studio
+                </p>
+              </div>
             </div>
             <p className="text-sm text-primary-foreground/70 leading-relaxed">
               Capturing your love story in timeless frames. Every moment, every
