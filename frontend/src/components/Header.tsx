@@ -49,7 +49,7 @@ export function Header() {
         <nav className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="Sanwaliya Logo" className="h-12 w-auto object-contain" />
+            <img src="/logo.png" alt="Sanwaliya Logo" className="h-12 w-12 rounded-full object-cover" />
             <div className="flex flex-col">
               <span
                 className={cn(
