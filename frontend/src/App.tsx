@@ -44,13 +44,12 @@ const App = () => (
           {/* Admin Routes */}
           <Route path="/admin/login" element={<Login />} />
 
-          <Route element={<ProtectedRoute />}>
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="media" element={<MediaManager />} />
-              <Route path="inquiries" element={<Inquiries />} />
-            </Route>
+          {/* TEMPORARILY REMOVED PROTECTED ROUTE WRAPPER FOR DEBUGGING */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="media" element={<MediaManager />} />
+            <Route path="inquiries" element={<Inquiries />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
