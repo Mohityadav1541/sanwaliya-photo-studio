@@ -10,6 +10,7 @@ import { FrameMaterialFactory, FrameFinishType } from "@/core/3d/FrameMaterialFa
 import { PhysicsEngine } from "@/core/3d/PhysicsEngine";
 import { ProgressiveTextureManager } from "@/core/3d/ProgressiveTextureManager";
 import { eventBus } from "@/core/eventBus";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Image assets
 import heroWedding from "@/assets/hero-wedding.jpg";
@@ -589,81 +590,93 @@ export function AntigravityGallery({
 
   return (
     <div className="relative w-full h-full select-none">
-      <Suspense
+      <ErrorBoundary
         fallback={
           <div className="absolute inset-0 flex items-center justify-center bg-[#FAF8F5] text-[#181817]">
             <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-8 rounded-full border-2 border-[#D9381E] border-t-transparent animate-spin" />
               <span className="font-serif text-sm tracking-widest text-[#181817]/70 uppercase">
-                Loading Daylight Atelier Canvas...
+                Hardware acceleration restricted. Switch to 2D Editorial Grid above.
               </span>
             </div>
           </div>
         }
       >
-        <Canvas
-          camera={{ position: [0, 0, 7.5], fov: 48 }}
-          dpr={[1, typeof window !== "undefined" ? Math.min(window.devicePixelRatio, 1.75) : 1]}
-          gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-          onCreated={({ gl }) => {
-            // Attach WebGL context loss and restoration listeners
-            WebGLResourceManager.attachContextListeners(gl.domElement);
-          }}
+        <Suspense
+          fallback={
+            <div className="absolute inset-0 flex items-center justify-center bg-[#FAF8F5] text-[#181817]">
+              <div className="flex flex-col items-center gap-2">
+                <div className="w-8 h-8 rounded-full border-2 border-[#D9381E] border-t-transparent animate-spin" />
+                <span className="font-serif text-sm tracking-widest text-[#181817]/70 uppercase">
+                  Loading Daylight Atelier Canvas...
+                </span>
+              </div>
+            </div>
+          }
         >
-          <color attach="background" args={["#FAF8F5"]} />
+          <Canvas
+            camera={{ position: [0, 0, 7.5], fov: 48 }}
+            dpr={[1, typeof window !== "undefined" ? Math.min(window.devicePixelRatio, 1.75) : 1]}
+            gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+            onCreated={({ gl }) => {
+              // Attach WebGL context loss and restoration listeners
+              WebGLResourceManager.attachContextListeners(gl.domElement);
+            }}
+          >
+            <color attach="background" args={["#FAF8F5"]} />
 
-          {/* Warm Gallery Skylight & Environmental Reflections */}
-          <Environment preset="apartment" />
-          <ambientLight intensity={0.75} color="#FAF8F5" />
-          <directionalLight
-            position={[7, 11, 6]}
-            intensity={2.1}
-            color="#FFFBF5"
-            castShadow
-            shadow-mapSize={[1024, 1024]}
-            shadow-bias={-0.0001}
-          />
+            {/* Warm Gallery Skylight & Environmental Reflections */}
+            <Environment preset="apartment" />
+            <ambientLight intensity={0.75} color="#FAF8F5" />
+            <directionalLight
+              position={[7, 11, 6]}
+              intensity={2.1}
+              color="#FFFBF5"
+              castShadow
+              shadow-mapSize={[1024, 1024]}
+              shadow-bias={-0.0001}
+            />
 
-          {/* Soft-Edged Museum Floor Contact Shadows */}
-          <ContactShadows
-            position={[0, -2.75, 0]}
-            opacity={0.38}
-            scale={18}
-            blur={2.4}
-            far={5}
-            color="#6E6A63"
-          />
+            {/* Soft-Edged Museum Floor Contact Shadows */}
+            <ContactShadows
+              position={[0, -2.75, 0]}
+              opacity={0.38}
+              scale={18}
+              blur={2.4}
+              far={5}
+              color="#6E6A63"
+            />
 
-          {/* Dynamic Studio Lighting Rig with Cursor-Following Key Light */}
-          <StudioLightingRig preset={lightingPreset} />
+            {/* Dynamic Studio Lighting Rig with Cursor-Following Key Light */}
+            <StudioLightingRig preset={lightingPreset} />
 
-          {/* Depth of Field Postprocessing (BokehPass) */}
-          <BokehEffectComposer
-            apertureValue={apertureValue}
-            focusDistance={selectedPhoto ? 3.8 : 7.2}
-            enabled={true}
-          />
+            {/* Depth of Field Postprocessing (BokehPass) */}
+            <BokehEffectComposer
+              apertureValue={apertureValue}
+              focusDistance={selectedPhoto ? 3.8 : 7.2}
+              enabled={true}
+            />
 
-          {/* Smooth Camera Animation on Selection */}
-          <CameraController targetItem={selectedPhoto} />
+            {/* Smooth Camera Animation on Selection */}
+            <CameraController targetItem={selectedPhoto} />
 
-          {/* Antigravity Physics with Magnetic Clustering in zero gravity: [0, 0, 0] */}
-          <Physics gravity={[0, 0, 0]}>
-            <ViewportEdgeColliders />
+            {/* Antigravity Physics with Magnetic Clustering in zero gravity: [0, 0, 0] */}
+            <Physics gravity={[0, 0, 0]}>
+              <ViewportEdgeColliders />
 
-            {displayItems.map((item) => (
-              <InteractivePhotoBody
-                key={item.id}
-                item={item}
-                activeCategory={activeCategory}
-                activeMood={activeMood}
-                onSelect={(selected) => onSelectPhoto(selected)}
-                isTargeted={selectedPhoto?.id === item.id}
-              />
-            ))}
-          </Physics>
-        </Canvas>
-      </Suspense>
+              {displayItems.map((item) => (
+                <InteractivePhotoBody
+                  key={item.id}
+                  item={item}
+                  activeCategory={activeCategory}
+                  activeMood={activeMood}
+                  onSelect={(selected) => onSelectPhoto(selected)}
+                  isTargeted={selectedPhoto?.id === item.id}
+                />
+              ))}
+            </Physics>
+          </Canvas>
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 }

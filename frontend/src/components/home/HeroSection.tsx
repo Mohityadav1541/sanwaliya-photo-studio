@@ -1,11 +1,13 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { Canvas, useThree, useFrame } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { Environment, ContactShadows } from "@react-three/drei";
 import { Physics, CuboidCollider } from "@react-three/rapier";
 import { Button } from "@/components/ui/button";
 import { FloatingPhotoFrame } from "@/components/3d/FloatingPhotoFrame";
 import { Sparkles, ArrowUpRight, Eye, RefreshCw, ChevronDown, Layers } from "lucide-react";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { WebGLDetector } from "@/core/3d/webglDetection";
 
 // Portfolio Image Assets
 import heroWedding from "@/assets/hero-wedding.jpg";
@@ -250,6 +252,11 @@ export function HeroSection() {
   const [hideTextOverlay, setHideTextOverlay] = useState(false);
   const [activeFrame, setActiveFrame] = useState<FrameConfig | null>(null);
   const [canvasKey, setCanvasKey] = useState(0);
+  const [webglSupported, setWebglSupported] = useState(true);
+
+  useEffect(() => {
+    setWebglSupported(WebGLDetector.isWebGLSupported());
+  }, []);
 
   const scrollToNextSection = () => {
     const el = document.getElementById("services-section");
@@ -262,17 +269,23 @@ export function HeroSection() {
     <section className="relative w-full h-screen overflow-hidden bg-[#FAF8F5] text-[#181817] select-none">
       {/* Full-Screen 3D Antigravity Canvas */}
       <div className="absolute inset-0 z-0">
-        <Suspense fallback={<CanvasFallback />}>
-          <Canvas
-            key={canvasKey}
-            camera={{ position: [0, 0, 7.2], fov: 46 }}
-            dpr={[1, 2]}
-            gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-          >
-            <color attach="background" args={["#FAF8F5"]} />
-            <AntigravityHeroScene onFrameSelect={(f) => setActiveFrame(f)} />
-          </Canvas>
-        </Suspense>
+        {!webglSupported ? (
+          <CanvasFallback />
+        ) : (
+          <ErrorBoundary fallback={<CanvasFallback />}>
+            <Suspense fallback={<CanvasFallback />}>
+              <Canvas
+                key={canvasKey}
+                camera={{ position: [0, 0, 7.2], fov: 46 }}
+                dpr={[1, 2]}
+                gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
+              >
+                <color attach="background" args={["#FAF8F5"]} />
+                <AntigravityHeroScene onFrameSelect={(f) => setActiveFrame(f)} />
+              </Canvas>
+            </Suspense>
+          </ErrorBoundary>
+        )}
       </div>
 
       {/* Decorative Archival Border Frame */}

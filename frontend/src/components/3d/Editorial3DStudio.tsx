@@ -4,6 +4,8 @@ import { Text, Float } from "@react-three/drei";
 import * as THREE from "three";
 import * as CANNON from "cannon-es";
 import { WebGLResourceManager } from "@/core/3d/WebGLResourceManager";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { WebGLDetector } from "@/core/3d/webglDetection";
 
 // Photography assets
 import heroWedding from "@/assets/hero-wedding.jpg";
@@ -461,10 +463,39 @@ function StudioPhysicsScene({
 function WebGLFallback() {
   return (
     <div className="flex flex-col items-center justify-center h-full text-center px-6 py-12 bg-[#FAF8F5] text-[#181817]">
-      <p className="font-serif text-2xl mb-2 text-[#181817]">Daylight Atelier 3D Studio</p>
+      <div className="w-8 h-8 rounded-full border-2 border-[#D9381E] border-t-transparent animate-spin mb-3" />
+      <p className="font-serif text-2xl mb-1 text-[#181817]">Daylight Atelier 3D Studio</p>
       <p className="text-xs uppercase tracking-widest text-[#6E6A63] font-mono">
         Loading physics canvas &amp; fine-art textures...
       </p>
+    </div>
+  );
+}
+
+// 2D Editorial Showcase fallback when WebGL hardware is disabled/restricted
+function Editorial2DFallback() {
+  return (
+    <div className="w-full h-full p-6 sm:p-8 flex flex-col justify-center bg-[#FAF8F5]">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 h-full max-h-[500px] overflow-hidden">
+        {PHOTO_ITEMS.slice(0, 6).map((item) => (
+          <div
+            key={item.id}
+            className="group relative rounded-xl overflow-hidden border border-[#181817]/10 bg-white shadow-sm hover:shadow-md transition-all duration-300"
+          >
+            <img
+              src={item.imageUrl}
+              alt={item.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-3 text-white">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-[#C5A880]">
+                {item.category}
+              </span>
+              <h4 className="font-serif text-sm font-normal">{item.title}</h4>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -480,6 +511,11 @@ export function Editorial3DStudio({
   const [isZeroG, setIsZeroG] = useState(false);
   const [interactionCount, setInteractionCount] = useState(0);
   const [key, setKey] = useState(0);
+  const [webglSupported, setWebglSupported] = useState(true);
+
+  useEffect(() => {
+    setWebglSupported(WebGLDetector.isWebGLSupported());
+  }, []);
 
   const handleReset = () => {
     setKey((prev) => prev + 1);
@@ -497,39 +533,47 @@ export function Editorial3DStudio({
             Daylight Atelier Experience
           </span>
           <span className="text-[10px] tracking-wider uppercase text-[#6E6A63] font-mono">
-            Three.js &middot; Cannon.js Physics Engine
+            {webglSupported ? "Three.js · Cannon.js Physics Engine" : "Archival 2D Exhibition View"}
           </span>
         </div>
       </div>
 
       {/* Floating Interaction Prompt */}
-      <div className="absolute top-4 right-5 z-20 pointer-events-none hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-[#181817]/10 backdrop-blur-md shadow-sm">
-        <span className="text-[11px] tracking-widest uppercase text-[#181817] font-mono">
-          Click or drag frames to impulse
-        </span>
-      </div>
+      {webglSupported && (
+        <div className="absolute top-4 right-5 z-20 pointer-events-none hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 border border-[#181817]/10 backdrop-blur-md shadow-sm">
+          <span className="text-[11px] tracking-widest uppercase text-[#181817] font-mono">
+            Click or drag frames to impulse
+          </span>
+        </div>
+      )}
 
-      {/* 3D Canvas */}
+      {/* 3D Canvas or 2D Fallback */}
       <div className="w-full h-[450px] sm:h-[540px] md:h-[620px]">
-        <Suspense fallback={<WebGLFallback />}>
-          <Canvas
-            key={key}
-            shadows
-            camera={{ position: [0, 1.5, 6.8], fov: 45 }}
-            dpr={[1, 2]}
-            gl={{ antialias: true, alpha: false }}
-            onCreated={({ gl }) => {
-              WebGLResourceManager.attachContextListeners(gl.domElement);
-            }}
-          >
-            <color attach="background" args={["#FAF8F5"]} />
-            <fog attach="fog" args={["#FAF8F5", 7, 14]} />
-            <StudioPhysicsScene
-              isZeroG={isZeroG}
-              onInteraction={() => setInteractionCount((c) => c + 1)}
-            />
-          </Canvas>
-        </Suspense>
+        {!webglSupported ? (
+          <Editorial2DFallback />
+        ) : (
+          <ErrorBoundary fallback={<Editorial2DFallback />}>
+            <Suspense fallback={<WebGLFallback />}>
+              <Canvas
+                key={key}
+                shadows
+                camera={{ position: [0, 1.5, 6.8], fov: 45 }}
+                dpr={[1, 2]}
+                gl={{ antialias: true, alpha: false }}
+                onCreated={({ gl }) => {
+                  WebGLResourceManager.attachContextListeners(gl.domElement);
+                }}
+              >
+                <color attach="background" args={["#FAF8F5"]} />
+                <fog attach="fog" args={["#FAF8F5", 7, 14]} />
+                <StudioPhysicsScene
+                  isZeroG={isZeroG}
+                  onInteraction={() => setInteractionCount((c) => c + 1)}
+                />
+              </Canvas>
+            </Suspense>
+          </ErrorBoundary>
+        )}
       </div>
 
       {/* Minimalist Editorial Controls Footer */}

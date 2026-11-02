@@ -89,6 +89,10 @@ export class WebGLDetector {
     }
   }
 
+  public static isWebGLSupported(): boolean {
+    return this.diagnose().isSupported;
+  }
+
   public static checkAndTriggerFallbackIfNeeded(): boolean {
     const diag = this.diagnose();
     if (!diag.isSupported) {
