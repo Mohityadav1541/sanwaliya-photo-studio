@@ -31,12 +31,10 @@ export function Header() {
 
   const isHomePage = location.pathname === "/";
   const headerBg = isScrolled || !isHomePage
-    ? "bg-background/95 backdrop-blur-md shadow-soft"
-    : "bg-transparent";
+    ? "bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#181817]/10 shadow-sm"
+    : "bg-[#FAF8F5]/75 backdrop-blur-sm";
 
-  const textColor = isScrolled || !isHomePage
-    ? "text-foreground"
-    : "text-primary-foreground";
+  const textColor = "text-[#181817]";
 
   return (
     <header
@@ -61,8 +59,7 @@ export function Header() {
               </span>
               <span
                 className={cn(
-                  "text-xs tracking-[0.3em] uppercase transition-colors duration-300",
-                  isScrolled || !isHomePage ? "text-muted-foreground" : "text-primary-foreground/80"
+                  "text-xs tracking-[0.3em] uppercase transition-colors duration-300 text-[#6E6A63]"
                 )}
               >
                 Photo Studio

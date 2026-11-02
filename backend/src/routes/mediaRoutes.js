@@ -4,10 +4,15 @@ const path = require('path');
 const fs = require('fs');
 const prisma = require('../prisma');
 const auth = require('../middleware/auth');
+const {
+    validateMagicBytes,
+    stripGpsExif,
+    sanitizeString,
+} = require('../middleware/security');
 
 const router = express.Router();
 
-// --- Configuration ---
+// --- Configuration with Sanitized Filenames ---
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadPath = path.join(__dirname, '../../uploads');
@@ -17,8 +22,11 @@ const storage = multer.diskStorage({
         cb(null, uploadPath);
     },
     filename: function (req, file, cb) {
+        // Sanitize original extension and create unguessable collision-free filename
+        const ext = path.extname(file.originalname).toLowerCase().replace(/[^a-z0-9.]/g, '');
+        const safeExt = ['.jpg', '.jpeg', '.png', '.webp', '.mp4'].includes(ext) ? ext : '.jpg';
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
+        cb(null, `atelier-${uniqueSuffix}${safeExt}`);
     },
 });
 
@@ -27,17 +35,17 @@ const fileFilter = (req, file, cb) => {
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type. Only JPG, PNG, WEBP and MP4 are allowed.'));
+        cb(new Error('Invalid MIME header. Only JPG, PNG, WEBP and MP4 are permitted.'));
     }
 };
 
 const upload = multer({
     storage: storage,
     fileFilter: fileFilter,
-    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB
+    limits: { fileSize: 25 * 1024 * 1024 }, // 25MB max
 });
 
-// --- Helper Functions ---
+// Helper for file cleanup
 const deleteFile = (filePath) => {
     if (!filePath) return;
     const absolutePath = path.join(__dirname, '../../', filePath);
@@ -50,17 +58,17 @@ const deleteFile = (filePath) => {
 
 // --- PUBLIC ROUTES ---
 
-// GET /api/media - List with filters and pagination
+// GET /api/media - List with filters, pagination and sorting
 router.get('/', async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
+        const limit = parseInt(req.query.limit) || 20;
         const skip = (page - 1) * limit;
 
         const { category, type, featured } = req.query;
 
         const where = {};
-        if (category) where.category = category;
+        if (category && category !== 'All') where.category = category;
         if (type) where.type = type;
         if (featured === 'true') where.isFeatured = true;
 
@@ -76,26 +84,28 @@ router.get('/', async (req, res) => {
 
         res.json({
             items,
-            total,
-            page,
-            limit,
-            totalPages: Math.ceil(total / limit),
+            pagination: {
+                total,
+                page,
+                pages: Math.ceil(total / limit),
+                limit,
+            },
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// GET /api/media/:id - Get single item
+// GET /api/media/:id - Fetch single media record
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const media = await prisma.mediaItem.findUnique({
-            where: { id: id },
+            where: { id },
         });
 
         if (!media) {
-            return res.status(404).json({ error: 'Media not found' });
+            return res.status(404).json({ error: 'Media asset not found' });
         }
 
         res.json(media);
@@ -104,9 +114,9 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// --- ADMIN ROUTES ---
+// --- ADMIN SECURE CRUD ROUTES ---
 
-// POST /api/media/admin - Create new media
+// POST /api/media/admin - Create new media with magic-byte validation & GPS stripping
 router.post('/admin', auth, upload.single('file'), async (req, res) => {
     try {
         const {
@@ -118,41 +128,61 @@ router.post('/admin', auth, upload.single('file'), async (req, res) => {
             eventDate,
             location,
             isFeatured,
+            frameFinish,
+            matteBorder,
         } = req.body;
 
         let fileUrl = null;
+
         if (req.file) {
+            const absoluteFilePath = req.file.path;
+
+            // Security Hardening: Magic-Byte MIME Validation
+            const isValidBytes = validateMagicBytes(absoluteFilePath);
+            if (!isValidBytes) {
+                deleteFile(`/uploads/${req.file.filename}`);
+                return res.status(400).json({
+                    error: 'Security verification failed: File contents do not match genuine image/video magic bytes.',
+                });
+            }
+
+            // Privacy Hardening: Strip sensitive GPS metadata
+            stripGpsExif(absoluteFilePath);
+
             fileUrl = `/uploads/${req.file.filename}`;
         }
 
-        // Validation: Require either fileUrl or externalUrl
         if (!fileUrl && !externalUrl) {
             return res.status(400).json({ error: 'Either file or externalUrl is required' });
         }
 
+        // Input Sanitization to prevent stored XSS attacks
+        const cleanTitle = sanitizeString(title) || 'Untitled Frame';
+        const cleanDescription = sanitizeString(description) || '';
+        const cleanLocation = sanitizeString(location) || 'Rajasthan, India';
+
         const media = await prisma.mediaItem.create({
             data: {
-                title: title || 'Untitled',
-                description,
-                category,
+                title: cleanTitle,
+                description: cleanDescription,
+                category: category || 'Weddings',
                 type: type || 'IMAGE',
                 fileUrl,
-                externalUrl,
+                externalUrl: externalUrl ? sanitizeString(externalUrl) : null,
                 eventDate: eventDate ? new Date(eventDate) : null,
-                location,
+                location: cleanLocation,
                 isFeatured: isFeatured === 'true',
             },
         });
 
         res.status(201).json(media);
     } catch (error) {
-        // Clean up uploaded file on error
         if (req.file) deleteFile(`/uploads/${req.file.filename}`);
         res.status(500).json({ error: error.message });
     }
 });
 
-// PUT /api/media/admin/:id - Update media
+// PUT /api/media/admin/:id - Update media record
 router.put('/admin/:id', auth, upload.single('file'), async (req, res) => {
     try {
         const { id } = req.params;
@@ -168,71 +198,80 @@ router.put('/admin/:id', auth, upload.single('file'), async (req, res) => {
         } = req.body;
 
         const existingMedia = await prisma.mediaItem.findUnique({
-            where: { id: id },
+            where: { id },
         });
 
         if (!existingMedia) {
-            // Clean up if new file was uploaded but record not found
             if (req.file) deleteFile(`/uploads/${req.file.filename}`);
             return res.status(404).json({ error: 'Media not found' });
         }
 
         let fileUrl = existingMedia.fileUrl;
 
-        // If new file uploaded, delete old one and update url
         if (req.file) {
+            const absoluteFilePath = req.file.path;
+            const isValidBytes = validateMagicBytes(absoluteFilePath);
+            if (!isValidBytes) {
+                deleteFile(`/uploads/${req.file.filename}`);
+                return res.status(400).json({
+                    error: 'Security verification failed: Corrupted or forged file header.',
+                });
+            }
+
+            stripGpsExif(absoluteFilePath);
+
+            // Delete old file if replacing
             if (existingMedia.fileUrl) {
                 deleteFile(existingMedia.fileUrl);
             }
             fileUrl = `/uploads/${req.file.filename}`;
         }
 
-        const updatedMedia = await prisma.mediaItem.update({
-            where: { id: id },
+        const updated = await prisma.mediaItem.update({
+            where: { id },
             data: {
-                title,
-                description,
-                category,
-                type,
+                title: title ? sanitizeString(title) : existingMedia.title,
+                description: description !== undefined ? sanitizeString(description) : existingMedia.description,
+                category: category || existingMedia.category,
+                type: type || existingMedia.type,
                 fileUrl,
-                externalUrl,
+                externalUrl: externalUrl ? sanitizeString(externalUrl) : existingMedia.externalUrl,
                 eventDate: eventDate ? new Date(eventDate) : existingMedia.eventDate,
-                location,
+                location: location ? sanitizeString(location) : existingMedia.location,
                 isFeatured: isFeatured !== undefined ? isFeatured === 'true' : existingMedia.isFeatured,
             },
         });
 
-        res.json(updatedMedia);
+        res.json(updated);
     } catch (error) {
         if (req.file) deleteFile(`/uploads/${req.file.filename}`);
         res.status(500).json({ error: error.message });
     }
 });
 
-// DELETE /api/media/admin/:id - Delete media
+// DELETE /api/media/admin/:id - Delete media record
 router.delete('/admin/:id', auth, async (req, res) => {
     try {
         const { id } = req.params;
 
         const media = await prisma.mediaItem.findUnique({
-            where: { id: id },
+            where: { id },
         });
 
         if (!media) {
             return res.status(404).json({ error: 'Media not found' });
         }
 
-        // Delete physical file
+        // Delete physical file on disk
         if (media.fileUrl) {
             deleteFile(media.fileUrl);
         }
 
-        // Delete db record
         await prisma.mediaItem.delete({
-            where: { id: id },
+            where: { id },
         });
 
-        res.json({ message: 'Media deleted successfully' });
+        res.json({ message: 'Media deleted successfully', id });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

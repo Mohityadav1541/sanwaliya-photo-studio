@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-export default {
+const config: Config = {
   darkMode: ["class"],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
@@ -14,10 +14,73 @@ export default {
     },
     extend: {
       fontFamily: {
-        serif: ["Cormorant Garamond", "serif"],
-        sans: ["Montserrat", "sans-serif"],
+        serif: ["'Cormorant Garamond'", "'Playfair Display'", "Georgia", "serif"],
+        sans: ["'Inter'", "system-ui", "-apple-system", "sans-serif"],
+        mono: ["'JetBrains Mono'", "monospace"],
+        editorial: ["'Cormorant Garamond'", "'Playfair Display'", "serif"],
+        atelier: ["'Cormorant Garamond'", "serif"],
       },
       colors: {
+        // Daylight Atelier Palette
+        alabaster: {
+          DEFAULT: "#FAF8F5",
+          light: "#FFFFFF",
+          warm: "#F5F3EF",
+        },
+        limestone: {
+          DEFAULT: "#EFECE6",
+          dark: "#E5E1D8",
+          muted: "#D8D3C8",
+        },
+        obsidian: {
+          DEFAULT: "#181817",
+          light: "#242423",
+          deep: "#0F0F0E",
+        },
+        warmSlate: {
+          DEFAULT: "#6E6A63",
+          light: "#8F8B83",
+          dark: "#4F4B45",
+        },
+        vermilion: {
+          DEFAULT: "#D9381E",
+          hover: "#C22E17",
+          glow: "rgba(217, 56, 30, 0.25)",
+        },
+        champagneGold: "#C5A880",
+        rawOak: "#D4BE9D",
+        matteEspresso: "#1E1D1B",
+
+        charcoal: {
+          DEFAULT: "#181817",
+          50: "#2A2A2A",
+          100: "#242423",
+          200: "#1E1E1D",
+          300: "#181817",
+          400: "#141413",
+          500: "#181817",
+        },
+        ivory: {
+          DEFAULT: "#FAF8F5",
+          50: "#FFFFFF",
+          100: "#FAF8F5",
+          200: "#F5F3EF",
+          300: "#EFECE6",
+          400: "#E5E1D8",
+          500: "#C9C2B5",
+          muted: "#6E6A63",
+        },
+        editorial: {
+          charcoal: "#181817",
+          ivory: "#FAF8F5",
+          accent: "#D9381E",
+          gold: "#C5A880",
+          oak: "#D4BE9D",
+          espresso: "#1E1D1B",
+          muted: "#6E6A63",
+          border: "rgba(24, 24, 23, 0.08)",
+          lightBorder: "rgba(24, 24, 23, 0.08)",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -118,4 +181,6 @@ export default {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+};
+
+export default config;
