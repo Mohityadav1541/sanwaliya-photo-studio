@@ -169,7 +169,7 @@ export function FloatingPhotoFrame({
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.06}
-          font="https://fonts.gstatic.com/s/jetbrainsmono/v18/tDbY2o-flEEny0FZhsfKu5WU4zr3E_ad06nG.woff"
+          font="/fonts/JetBrainsMono.ttf"
         >
           {title.toUpperCase()}
         </Text>
@@ -181,7 +181,7 @@ export function FloatingPhotoFrame({
           anchorX="center"
           anchorY="middle"
           letterSpacing={0.12}
-          font="https://fonts.gstatic.com/s/jetbrainsmono/v18/tDbY2o-flEEny0FZhsfKu5WU4zr3E_ad06nG.woff"
+          font="/fonts/JetBrainsMono.ttf"
         >
           {category.toUpperCase()}
         </Text>
