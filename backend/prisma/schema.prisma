@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model AdminUser {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(uuid())
   name         String?
   email        String   @unique
   passwordHash String
@@ -16,7 +16,7 @@ model AdminUser {
 }
 
 model MediaItem {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  id           String    @id @default(uuid())
   title        String
   description  String?
   category     String?
@@ -31,7 +31,7 @@ model MediaItem {
 }
 
 model ContactRequest {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String    @id @default(uuid())
   name          String
   phone         String?
   email         String
